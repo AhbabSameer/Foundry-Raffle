@@ -13,7 +13,7 @@ contract RaffleTest is Test {
     uint256 interval;
     address vrfCoordinator;
     bytes32 gasLane;
-    uint64 subscriptionId;
+    uint256 subscriptionId;
     uint32 callbackGasLimit;
 
     address public player = makeAddr("player");
@@ -39,10 +39,7 @@ contract RaffleTest is Test {
     }
 
     function testRaffleInitializesInOpenState() public view {
-        assertEq(
-            uint256(raffle.getRaffleState()),
-            uint256(Raffle.RaffleState.OPEN)
-        );
+        assertEq(uint256(raffle.getRaffleState()), uint256(Raffle.RaffleState.OPEN));
     }
 
     // enter Raffle test //
@@ -71,7 +68,7 @@ contract RaffleTest is Test {
         raffle.enterRaffle{value: entranceFee}();
     }
 
-    function testDontAllowPlayerToEnterWhenRaffleIsCalculating() public {
+    function testPlayerCannotEnterRaffleWhenRaffleIsCalculating() public {
         vm.prank(player);
         raffle.enterRaffle{value: entranceFee}();
 
@@ -79,6 +76,7 @@ contract RaffleTest is Test {
         vm.roll(block.number + 1);
 
         raffle.performUpkeep("");
+
         vm.expectRevert(Raffle.Raffle__RaffleNotOpen.selector);
         vm.prank(player);
         raffle.enterRaffle{value: entranceFee}();
