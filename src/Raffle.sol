@@ -44,6 +44,7 @@ contract Raffle is VRFConsumerBaseV2Plus {
      */
     event raffleEntered(address indexed player);
     event WinnerPicked(address indexed winner);
+    event RequestedRaffleWinner(uint256 indexed requestId);
 
     /**
      * Errors
@@ -140,6 +141,8 @@ contract Raffle is VRFConsumerBaseV2Plus {
                 )
             })
         );
+
+        emit RequestedRaffleWinner(requestId);
     }
 
     function fulfillRandomWords(uint256 requestId, uint256[] calldata randomWords) internal virtual override {
@@ -174,7 +177,31 @@ contract Raffle is VRFConsumerBaseV2Plus {
         return s_raffleState;
     }
 
+    function getInterval() external view returns (uint256) {
+        return I_INTERVAL;
+    }
+
+    function getKeyHash() external view returns (bytes32) {
+        return i_keyHash;
+    }
+
+    function getSubscriptionId() external view returns (uint256) {
+        return i_subscriptionId;
+    }
+
+    function getCallbackGasLimit() external view returns (uint32) {
+        return i_callbackGasLimit;
+    }
+
     function getPlayer(uint256 index) external view returns (address) {
         return s_players[index];
+    }
+
+    function getTotalNumberOfPlayers() external view returns (uint256) {
+        return s_players.length;
+    }
+
+    function getLastTimeStamp() external view returns (uint256) {
+        return s_lastTimeStamp;
     }
 }
